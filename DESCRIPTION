@@ -1,0 +1,15 @@
+Package: lightparser
+Version: 0.0.0.9000
+Title: From Rmd And Qmd To Tibble And Back
+Description: Split your Rmd or Qmd file by sections into a tibble: titles, text, chunks. Rebuild it from the tibble.
+Authors@R: c(person(given = "Sebastien",
+         family = "Rochette",
+         role = c("aut", "cre"),
+         email = "sebastien@thinkr.fr",
+         comment = c(ORCID = "0000-0002-1565-9313")),
+  person(given = "ThinkR",
+         role = "cph"))
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
