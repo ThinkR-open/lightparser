@@ -59,12 +59,8 @@ usethis::git_default_branch_rename()
 ```{r, eval=FALSE}
 # Install a first time
 remotes::install_local()
-# README
-usethis::use_readme_rmd()
 # Code of Conduct
-usethis::use_code_of_conduct("contact@fake.com")
-# NEWS
-usethis::use_news_md()
+usethis::use_code_of_conduct("coc@thinkr.fr")
 ```
 
 **From now, you will need to "inflate" your package at least once to be able to use the following commands. Let's go to your flat template, and come back here later if/when needed.**
@@ -79,23 +75,6 @@ usethis::use_pipe()
 
 # package-level documentation
 usethis::use_package_doc()
-
-# GitHub
-# Add your credentials for GitHub
-usethis::create_github_token()
-gitcreds::gitcreds_set()
-
-# _Or one step at a time
-# Send your project to a new GitHub project (included in `init_share_on_github()`)
-usethis::use_github()
-
-# Set Continuous Integration
-# _GitHub (included in `init_share_on_github()`)
-usethis::use_github_action_check_standard()
-usethis::use_github_action("pkgdown")
-usethis::use_github_action("test-coverage")
-# _GitLab
-gitlabr::use_gitlab_ci(type = "check-coverage-pkgdown")
 ```
 
 ## Use everytime needed
@@ -105,28 +84,85 @@ gitlabr::use_gitlab_ci(type = "check-coverage-pkgdown")
 pkgload::load_all()
 
 # Generate documentation and deal with dependencies
-attachment::att_amend_desc()
+attachment::att_amend_desc(pkg_ignore = c("fusen", "usethis"), update.config = TRUE)
 
 # Check the package
 devtools::check()
 
 # Add a new flat template
 fusen::add_flat_template("add")
+
+# Build Readme
+devtools::build_readme()
 ```
 
-# Share the package
+## Prepare for CRAN
 
 ```{r, eval=FALSE}
-# set and try pkgdown documentation website locally
-usethis::use_pkgdown()
-pkgdown::build_site()
+# Run examples in interactive mode too
+devtools::run_examples()
 
-# build the tar.gz with vignettes to share with others
-devtools::build(vignettes = TRUE)
+# Check package as CRAN
+rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"))
+devtools::check(args = c("--no-manual", "--as-cran"))
 
-# Share your package and its documentation on GitHub
-# usethis::create_github_token()
-# gitcreds::gitcreds_set()
-fusen::init_share_on_github()
+# Check content
+# remotes::install_github("ThinkR-open/checkhelper")
+tags <- checkhelper::find_missing_tags()
+View(tags$functions)
+
+# Remettre: Config/testthat/parallel: false dans DESCRIPTION
+out <- checkhelper::check_clean_userspace(pkg = ".")
+out
+checkhelper::check_as_cran()
+# Remettre: Config/testthat/parallel: true dans DESCRIPTION
+
+# Check spelling
+# usethis::use_spell_check()
+spelling::spell_check_package()
+
+# Check URL are correct
+# remotes::install_github("r-lib/urlchecker")
+urlchecker::url_check()
+urlchecker::url_update()
+
+# Upgrade version number
+usethis::use_version(which = c("patch", "minor", "major", "dev")[2])
+
+# check on other distributions
+# _rhub
+devtools::check_rhub()
+rhub::platforms()
+rhub::check_on_windows(check_args = "--force-multiarch", show_status = FALSE)
+rhub::check_on_solaris(show_status = FALSE)
+rhub::check(platform = "debian-clang-devel", show_status = FALSE)
+rhub::check(platform = "debian-gcc-devel", show_status = FALSE)
+rhub::check(platform = "fedora-clang-devel", show_status = FALSE)
+rhub::check(platform = "macos-m1-bigsur-release", show_status = FALSE)
+rhub::check_for_cran(show_status = FALSE)
+
+
+rhub::check(platform = "windows-x86_64-devel", show_status = FALSE)
+
+# _win devel
+devtools::check_win_devel()
+devtools::check_win_release()
+# remotes::install_github("r-lib/devtools")
+devtools::check_mac_release()
+
+# Update NEWS
+# Bump version manually and add list of changes
+
+# Add comments for CRAN
+usethis::use_cran_comments(open = rlang::is_interactive())
+
+# Upgrade version number
+usethis::use_version(which = c("patch", "minor", "major", "dev")[1])
+
+# Verify you're ready for release, and release
+devtools::release()
+
+# Back to dev
+usethis::use_version(which = c("patch", "minor", "major", "dev")[4])
 ```
 

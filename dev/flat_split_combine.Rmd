@@ -3,6 +3,8 @@ title: "dev_history.Rmd for working package"
 author: "Sébastien Rochette"
 date: "23/01/2021"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r development, include=FALSE}
@@ -14,7 +16,7 @@ library(testthat)
 This is the core of {fusen}. Where everything starts.  
 {fusen} reads your flat file to detect what is a yaml header, 
 what is a code chunk and its options, what is a text part.  
-Function `get_rmd_parts()` returns a tibble with all these parts.
+Function `split_to_tbl()` returns a tibble with all these parts.
 
 You're not supposed to use this function directly when working with {fusen}.
 However, since {parsermd} is not maintained anymore, you may be interested in
@@ -31,9 +33,12 @@ having access to these core functions.
 #' - `text`: text of the part (if any)
 #' - `code`: code of the part (if any)
 #' - `heading`: heading of the part (if any)
+#' 
+#' @importFrom tibble tibble
+#' @importFrom utils getFromNamespace
 #'
 #' @export
-get_rmd_parts <- function(file) {
+split_to_tbl <- function(file) {
   rmd_lines <- readLines(file)
   # Get yaml header
   if (!grepl("^---$", rmd_lines[1])) {
@@ -68,11 +73,11 @@ get_rmd_parts <- function(file) {
   getFromNamespace("chunk_counter", "knitr")(reset = TRUE)
   options(knitr.duplicate.label = "allow")
   # Restore after splitting
-  on.exit(options(knitr.duplicate.label = NULL))
+  on.exit(options(knitr.duplicate.label = NULL), add = TRUE)
   # restore unnamed-chunk counter
-  on.exit(getFromNamespace("chunk_counter", "knitr")(reset = TRUE))
-  on.exit(knitr::knit_code$restore())
-  on.exit(getFromNamespace("knit_log", "knitr")$restore())
+  on.exit(getFromNamespace("chunk_counter", "knitr")(reset = TRUE), add = TRUE)
+  on.exit(knitr::knit_code$restore(), add = TRUE)
+  on.exit(getFromNamespace("knit_log", "knitr")$restore(), add = TRUE)
 
 
   # Split files
@@ -91,7 +96,7 @@ get_rmd_parts <- function(file) {
     }),
     params = lapply(out, function(x) {
       if (!is.null(x$params) &&
-        (is.null(x$params$engine) || x$params$engine == "r")) {
+            (is.null(x$params$engine) || x$params$engine == "r")) {
         # if chunk is not 'r' chunk, it must be accounted as text
         x$params
       } else {
@@ -174,15 +179,19 @@ get_rmd_parts <- function(file) {
 ```
 
 ```{r examples}
-file <- system.file("tests-templates/dev-template-parsing.Rmd",
-  package = "fusen"
+file <- system.file(
+  "dev-template-parsing.Rmd",
+  package = "lightparser"
 )
-get_rmd_parts(file)
+split_to_tbl(file)
 ```
 
 ```{r dev, eval=FALSE}
 # What we expect from split_rmd()
-file <- system.file("tests-templates/dev-template-parsing.Rmd", package = "fusen")
+file <- system.file(
+  "dev-template-parsing.Rmd",
+  package = "lightparser"
+)
 full_parsed_list <- parsermd::parse_rmd(file)
 full_parsermd_tbl <- parsermd::as_tibble(full_parsed_list)
 saveRDS(full_parsermd_tbl, file = here::here("data-raw/full_parsermd_tbl.rds"))
@@ -251,14 +260,14 @@ full_parsermd_tbl$ast[[4]]
 
 
 ```{r tests}
-file <- system.file("tests-templates/dev-template-parsing.Rmd",
-  package = "fusen"
+file <- system.file("dev-template-parsing.Rmd",
+  package = "lightparser"
 )
-# debugonce(get_rmd_parts)
-tbl_rmd <- get_rmd_parts(file)
+# debugonce(split_to_tbl)
+tbl_rmd <- split_to_tbl(file)
 
-# get_rmd_parts works as expected ----
-test_that("get_rmd_parts gets yaml header data", {
+# split_to_tbl works as expected ----
+test_that("split_to_tbl gets yaml header data", {
   expect_equal(sum(tbl_rmd[["type"]] == "yaml"), 1)
   w_yaml <- which(tbl_rmd[["type"]] == "yaml")
   expect_equal(
@@ -279,12 +288,12 @@ headings <- c(
   "Inflate your package"
 )
 
-test_that("get_rmd_parts gets titles in markdown part only", {
+test_that("split_to_tbl gets titles in markdown part only", {
   expect_equal(sum(tbl_rmd[["type"]] == "heading"), 6)
   expect_equal(tbl_rmd[["heading"]][!is.na(tbl_rmd[["heading"]])], headings)
 })
 
-test_that("get_rmd_parts gets text parts without titles", {
+test_that("split_to_tbl gets text parts without titles", {
   expect_equal(sum(tbl_rmd[["type"]] == "inline"), 16)
   expect_equal(
     sum(tbl_rmd[["type"]] == "inline"),
@@ -301,7 +310,7 @@ test_that("get_rmd_parts gets text parts without titles", {
     unlist(tbl_rmd[tbl_rmd[["type"]] == "inline", ][["text"]])))
 })
 
-test_that("get_rmd_parts gets R-only chunks with label and options", {
+test_that("split_to_tbl gets R-only chunks with label and options", {
   expect_equal(sum(tbl_rmd[["type"]] == "block"), 12)
   # labels
   expect_equal(
@@ -329,7 +338,7 @@ test_that("get_rmd_parts gets R-only chunks with label and options", {
   )
 })
 
-test_that("get_rmd_parts - chunk code extracted contains R code only", {
+test_that("split_to_tbl - chunk code extracted contains R code only", {
   expect_equal(
     as.character(tbl_rmd[["code"]][tbl_rmd[["type"]] == "block"][[5]]),
     c("my_median(1:12)")
@@ -342,10 +351,10 @@ test_that("get_rmd_parts - chunk code extracted contains R code only", {
 })
 
 test_that(
-  "get_rmd_parts gets does not increment unnamed-chunks id when run a 2nd time",
+  "split_to_tbl gets does not increment unnamed-chunks id when run a 2nd time",
   {
-    tbl_rmd <- get_rmd_parts(file)
-    tbl_rmd <- get_rmd_parts(file) # 2nd time
+    tbl_rmd <- split_to_tbl(file)
+    tbl_rmd <- split_to_tbl(file) # 2nd time
     expect_equal(sum(tbl_rmd[["type"]] == "block"), 12)
     expect_equal(
       tbl_rmd[["label"]][tbl_rmd[["type"]] == "block"],
@@ -360,11 +369,11 @@ test_that(
 )
 ```
 
-# combine_parsed
+# combine_tbl_to_file
     
-```{r function-combine_parsed}
+```{r function-combine_tbl_to_file}
 #' Prepare all content from parsedtbl to be combined into a Rmd file
-#' @param parsed_tbl A tibble with 6 columns as issued by `get_rmd_parts()`
+#' @param parsed_tbl A tibble with 6 columns as issued by `split_to_tbl()`
 #' @return A tibble with a new column `content` containing the content
 #'  for the future rmd file
 #' @noRd
@@ -449,12 +458,12 @@ create_content <- function(type, params, code, text) {
 }
 
 #' Combine a parsed tbl Rmd / Qmd file into a new file
-#' @param parsed_tbl A tibble with 6 columns as issued by `get_rmd_parts()`
+#' @param parsed_tbl A tibble with 6 columns as issued by `split_to_tbl()`
 #' @param output_file A Rmd / Qmd file path to write the new content
 #' @return The content of a Rmd / Qmd file and
 #' the resulting file if output_file is provided.
 #' @export
-combine_parsed <- function(parsed_tbl, output_file) {
+combine_tbl_to_file <- function(parsed_tbl, output_file) {
   # check that parsed_tbl is a tibble with the proper 6 columns
   if (!inherits(parsed_tbl, "tbl_df")) {
     stop("parsed_tbl must be a tibble")
@@ -478,15 +487,19 @@ combine_parsed <- function(parsed_tbl, output_file) {
 }
 ```
   
-```{r example-combine_parsed}
-combine_parsed()
+```{r example-combine_tbl_to_file}
+file <- system.file("dev-template-parsing.Rmd",
+  package = "lightparser"
+)
+tbl_rmd <- split_to_tbl(file)
+combine_tbl_to_file(tbl_rmd, tempfile(fileext = ".Rmd"))
 ```
   
-```{r tests-combine_parsed}
-file <- system.file("tests-templates/dev-template-parsing.Rmd",
-  package = "fusen"
+```{r tests-combine_tbl_to_file}
+file <- system.file("dev-template-parsing.Rmd",
+  package = "lightparser"
 )
-tbl_rmd <- get_rmd_parts(file)
+tbl_rmd <- split_to_tbl(file)
 tbl_rmd_content <- get_content_parsedtbl(tbl_rmd)
 
 test_that("get_content_parsedtbl can create the Rmd content for each type", {
@@ -541,8 +554,8 @@ test_that("get_content_parsedtbl can create the Rmd content for each type", {
   )
 })
 
-test_that("combine_parsed perfectly recreates the content of R chunks", {
-  out_content <- combine_parsed(tbl_rmd_content)
+test_that("combine_tbl_to_file perfectly recreates the content of R chunks", {
+  out_content <- combine_tbl_to_file(tbl_rmd_content)
   temp_purl_original <-
     suppressMessages(
       knitr::purl(
@@ -577,6 +590,7 @@ fusen::inflate(
     "Split a Rmd or Qmd file into a tibble and vice-versa" =
       "z-Split a Rmd or Qmd file into a tibble and vice-versa"
   ),
-  check = FALSE
+  check = FALSE,
+  open_vignette = FALSE
 )
 ```

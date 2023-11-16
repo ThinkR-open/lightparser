@@ -20,7 +20,14 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/ThinkR-open/lightparser/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ThinkR-open/lightparser?branch=main)
 <!-- badges: end -->
 
-The goal of lightparser is to ...
+You need to extract some specific information from your Rmd or Qmd file?
+{lightparser} is designed to split your Rmd or Qmd file by sections into a tibble: titles, text, chunks.
+It stores them as a tibble, so you can easily manipulate it with dplyr or purrr.
+Later, you can rebuild a Rmd or Qmd from the tibble.
+
+This is a light version of {parsermd} that has not been updated for a long time, 
+and which is not compatible with the latest versions of C++ compilers.
+{lightparser} does not rely on C++ compilation.
 
 ## Installation
 
@@ -37,25 +44,25 @@ Full documentation website on: https://ThinkR-open.github.io/lightparser
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Split your Rmd or Qmd file into a tibble:
 
-```{r example}
+```{r}
 library(lightparser)
-## basic example code
+
+file <- system.file(
+  "dev-template-parsing.Rmd",
+  package = "lightparser"
+)
+tbl_rmd <- split_to_tbl(file)
+tbl_rmd
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Combine the tibble into a Rmd or Qmd file:
 
-```{r cars}
-summary(cars)
+```{r}
+combine_tbl_to_file(tbl_rmd, tempfile(fileext = ".Rmd"))
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+## Code of Conduct
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+Please note that the lightparser project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

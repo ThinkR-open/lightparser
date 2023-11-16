@@ -1,0 +1,17 @@
+flat_split_combine.Rmd:
+  path: dev/flat_split_combine.Rmd
+  state: active
+  R:
+  - R/get_content_parsedtbl.R
+  - R/split_to_tbl.R
+  tests:
+  - tests/testthat/test-split_to_tbl.R
+  - tests/testthat/test-get_content_parsedtbl.R
+  vignettes: vignettes/z-split-a-rmd-or-qmd-file-into-a-tibble-and-vice-versa.Rmd
+  inflate:
+    flat_file: dev/flat_split_combine.Rmd
+    vignette_name: z-Split a Rmd or Qmd file into a tibble and vice-versa
+    open_vignette: false
+    check: false
+    document: true
+    overwrite: ask
