@@ -1,3 +1,6 @@
 ^dev$
 ^\.here$
 ^LICENSE\.md$
+^README\.Rmd$
+^\.github$
+^codecov\.yml$
