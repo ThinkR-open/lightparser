@@ -84,7 +84,11 @@ usethis::use_package_doc()
 pkgload::load_all()
 
 # Generate documentation and deal with dependencies
-attachment::att_amend_desc(pkg_ignore = c("fusen", "usethis"), update.config = TRUE)
+attachment::att_amend_desc(
+  pkg_ignore = c("fusen", "usethis", "callr"),
+  extra.suggests = c("callr"),
+  update.config = TRUE
+)
 
 # Check the package
 devtools::check()
