@@ -28,7 +28,7 @@ test_that("get_content_parsedtbl can create the Rmd content for each type", {
   # chunk
   expect_equal(
     tbl_rmd_content$content[[3]],
-    "```{r development}\n#| include: no\n\nlibrary(testthat)\n```\n"
+    "``\u0060{r development}\n#| include: no\n\nlibrary(testthat)\n``\u0060\n"
   )
   # title
   expect_equal(
@@ -43,17 +43,17 @@ test_that("get_content_parsedtbl can create the Rmd content for each type", {
   # no params and no label
   expect_equal(
     tbl_rmd_content$content[[32]],
-    "```{r}\n# duplicate empty name\n```\n" 
+    "``\u0060{r}\n# duplicate empty name\n``\u0060\n"
   )
   # test the content of chunk description
   expect_true(
     all(
-      grepl("^```\\{r description\\}", tbl_rmd_content$content[[7]]),
+      grepl("^``\u0060\\{r description\\}", tbl_rmd_content$content[[7]]),
       !grepl("#\\| label: description", tbl_rmd_content$content[[7]]),
       grepl("# --> for parse tests", tbl_rmd_content$content[[7]]),
       grepl("\\nfusen::fill_description", tbl_rmd_content$content[[7]]),
       grepl("\\nusethis::use_mit_license", tbl_rmd_content$content[[7]]),
-      grepl("```\\n$", tbl_rmd_content$content[[7]])
+      grepl("``\u0060\\n$", tbl_rmd_content$content[[7]])
     )
   )
 })
@@ -83,4 +83,3 @@ test_that("combine_tbl_to_file perfectly recreates the content of R chunks", {
 
 # TODO - Test if quarto is exactly the same before and after split and combine
 # using template dev-template-tests.qmd
-

@@ -10,7 +10,7 @@
 #' - `text`: text of the part (if any)
 #' - `code`: code of the part (if any)
 #' - `heading`: heading of the part (if any)
-#' 
+#'
 #' @importFrom tibble tibble
 #' @importFrom utils getFromNamespace
 #'
@@ -44,6 +44,80 @@ split_to_tbl <- function(file) {
 
   # Get the rest of the document without yaml
   rmd_lines_no_yaml <- rmd_lines[-c(yaml_begin:yaml_end)]
+
+  # TODO - In another process for knit in knit
+  # dput(rmd_lines_no_yaml)
+  # Are we inside a Rmd/Qmd that is currently knitted ?
+  # If so, we cannot use knitr::split_file() in the current session
+  # because it will affect the hidden knit environment variables.
+  outside_knit <- is.null(knitr::opts_knit$get("out.format"))
+
+  if (outside_knit) {
+    res_split <- knitr_split(rmd_lines_no_yaml)
+  } else {
+    message(
+      "It seems you are currently knitting a Rmd/Qmd file.",
+      " The parsing of the file will be done in a new R session."
+    )
+    tempfile_code_in <- tempfile(fileext = ".R")
+    tempfile_data_in <- tempfile()
+    tempfile_data_out <- tempfile()
+
+    dput(rmd_lines_no_yaml, file = tempfile_data_in)
+    code_to_run <- sprintf(
+      paste(
+        c(
+          "rmd_lines_no_yaml <- dget('%s')",
+          "res_split <- getFromNamespace('knitr_split', 'lightparser')(
+            rmd_lines_no_yaml)",
+          "dput(res_split, file = '%s')"
+        ),
+        collapse = "\n"
+      ),
+      tempfile_data_in,
+      tempfile_data_out
+    )
+    cat(code_to_run, file = tempfile_code_in)
+    outsystem <- system(
+      paste0(
+        normalizePath(file.path(Sys.getenv("R_HOME"), "bin", "Rscript '"),
+          mustWork = FALSE
+        ),
+        tempfile_code_in,
+        "'"
+      )
+    )
+    res_split <- dget(tempfile_data_out)
+    file.remove(
+      c(tempfile_code_in, tempfile_data_in, tempfile_data_out)
+    )
+  }
+
+  res_split$text <- lapply(res_split$text, split_headers_from_text)
+  res_split <- tidyr::unnest(res_split, cols = text)
+  # Get headings
+  res_split$heading <- sapply(
+    seq_len(nrow(res_split)),
+    function(x) {
+      if (grepl("heading", names(res_split$text)[x])) {
+        gsub("^#*\\s*", "", res_split$text[x])
+      } else {
+        NA
+      }
+    }
+  )
+
+  res_split$type[!is.na(res_split$heading)] <- "heading"
+
+  # Put back yaml in 'res'
+  res_full <- rbind(yaml_tbl, res_split)
+
+  return(res_full)
+}
+
+#' Split text and chunks from a Rmd or Qmd file into a tibble
+#' @noRd
+knitr_split <- function(rmd_lines_no_yaml) {
   # Use hidden functions of {knitr}
   # Code extracted will be stored in a new environment
   # with `knitr:::split_file()`
@@ -79,7 +153,7 @@ split_to_tbl <- function(file) {
     }),
     params = lapply(out, function(x) {
       if (!is.null(x$params) &&
-            (is.null(x$params$engine) || x$params$engine == "r")) {
+        (is.null(x$params$engine) || x$params$engine == "r")) {
         # if chunk is not 'r' chunk, it must be accounted as text
         x$params
       } else {
@@ -114,48 +188,29 @@ split_to_tbl <- function(file) {
     })
   )
 
-  # split_headers_in_text
-  split_headers_from_text <- function(the_text) {
-    new_group <- rep(FALSE, length(the_text))
-    which_header <- grep("^#", the_text)
-    if (length(which_header) != 0) {
-      new_group[which_header] <- TRUE
-      # Change group just after header
-      which_header_plus <- 1 + which_header[
-        (which_header + 1) <= length(new_group)
-      ]
-      if (length(which_header_plus) != 0) {
-        new_group[which_header_plus] <- TRUE
-      }
-      groups <- cumsum(new_group)
-      groups[which_header] <- paste0(groups[which_header], "-heading")
+  return(res)
+}
 
-      split_text <- split(the_text, groups)
-    } else {
-      split_text <- list(the_text)
+#' split_headers_in_text
+#' @noRd
+split_headers_from_text <- function(the_text) {
+  new_group <- rep(FALSE, length(the_text))
+  which_header <- grep("^#", the_text)
+  if (length(which_header) != 0) {
+    new_group[which_header] <- TRUE
+    # Change group just after header
+    which_header_plus <- 1 + which_header[
+      (which_header + 1) <= length(new_group)
+    ]
+    if (length(which_header_plus) != 0) {
+      new_group[which_header_plus] <- TRUE
     }
-    return(split_text)
+    groups <- cumsum(new_group)
+    groups[which_header] <- paste0(groups[which_header], "-heading")
+
+    split_text <- split(the_text, groups)
+  } else {
+    split_text <- list(the_text)
   }
-
-  res_split <- res
-  res_split$text <- lapply(res_split$text, split_headers_from_text)
-  res_split <- tidyr::unnest(res_split, cols = text)
-  # Get headings
-  res_split$heading <- sapply(
-    seq_len(nrow(res_split)),
-    function(x) {
-      if (grepl("heading", names(res_split$text)[x])) {
-        gsub("^#*\\s*", "", res_split$text[x])
-      } else {
-        NA
-      }
-    }
-  )
-
-  res_split$type[!is.na(res_split$heading)] <- "heading"
-
-  # Put back yaml in 'res'
-  res_full <- rbind(yaml_tbl, res_split)
-
-  return(res_full)
+  return(split_text)
 }

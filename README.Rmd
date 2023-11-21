@@ -44,15 +44,21 @@ Full documentation website on: https://ThinkR-open.github.io/lightparser
 
 ## Example
 
+
 Split your Rmd or Qmd file into a tibble:
 
 ```{r}
+knitr::opts_knit$get("out.format")
+
+
 library(lightparser)
 
 file <- system.file(
   "dev-template-parsing.Rmd",
   package = "lightparser"
 )
+
+
 tbl_rmd <- split_to_tbl(file)
 tbl_rmd
 ```
@@ -60,9 +66,14 @@ tbl_rmd
 Combine the tibble into a Rmd or Qmd file:
 
 ```{r}
-combine_tbl_to_file(tbl_rmd, tempfile(fileext = ".Rmd"))
+file_out <- tempfile(fileext = ".Rmd")
+out <- combine_tbl_to_file(tbl_rmd, file_out)
 ```
 
+Read the file re-created with `combine_tbl_to_file()` to verify it is a proper Rmd
+```{r}
+cat(readLines(file_out), sep = "\n")
+```
 ## Code of Conduct
 
 Please note that the lightparser project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

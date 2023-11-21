@@ -35,11 +35,12 @@ create_content_yaml <- function(params) {
 #' @return A character string of R code chunk content
 #' @noRd
 create_content_r_chunk <- function(params, code) {
-
   other_params <- params[which(names(params) != "label")]
 
   paste0(
-    "```{r",
+    # USe \\u0060 instead of "`"
+    # so that Vscode does not interpret it as chunk
+    "\u0060``{r",
     ifelse(
       is.null(params$label) || grepl("unnamed-chunk", params$label),
       "",
@@ -62,7 +63,7 @@ create_content_r_chunk <- function(params, code) {
       )
     ),
     paste(code, collapse = "\n"),
-    "\n```\n"
+    "\n\u0060``\n"
   )
 }
 

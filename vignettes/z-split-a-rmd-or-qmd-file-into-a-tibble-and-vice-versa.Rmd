@@ -1,8 +1,8 @@
 ---
 title: "Split a Rmd or Qmd file into a tibble and vice-versa"
 output: rmarkdown::html_vignette
-author: "Sébastien Rochette"
-date: "23/01/2021"
+author: "statnmap"
+date: "2021-01-23"
 vignette: >
   %\VignetteIndexEntry{z-split-a-rmd-or-qmd-file-into-a-tibble-and-vice-versa}
   %\VignetteEngine{knitr::rmarkdown}
