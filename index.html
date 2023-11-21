@@ -103,13 +103,20 @@
 </h2>
 <p>Split your Rmd or Qmd file into a tibble:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ThinkR-open/lightparser" class="external-link">lightparser</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_knit.html" class="external-link">opts_knit</a></span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"out.format"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "markdown"</span></span>
+<span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ThinkR-open/lightparser" class="external-link">lightparser</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
 <span>  <span class="st">"dev-template-parsing.Rmd"</span>,</span>
 <span>  package <span class="op">=</span> <span class="st">"lightparser"</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span></span>
 <span><span class="va">tbl_rmd</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/split_to_tbl.html">split_to_tbl</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; It seems you are currently knitting a Rmd/Qmd file. The parsing of the file will be done in a new R session.</span></span>
 <span><span class="va">tbl_rmd</span></span>
 <span><span class="co">#&gt; # A tibble: 35 × 6</span></span>
 <span><span class="co">#&gt;    type    label       params           text         code       heading         </span></span>
@@ -126,6 +133,182 @@
 <span><span class="co">#&gt; 10 inline  &lt;NA&gt;        &lt;lgl [1]&gt;        &lt;chr [5]&gt;    &lt;lgl [1]&gt;  &lt;NA&gt;            </span></span>
 <span><span class="co">#&gt; # ℹ 25 more rows</span></span></code></pre></div>
 <p>Combine the tibble into a Rmd or Qmd file:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">file_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".Rmd"</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/combine_tbl_to_file.html">combine_tbl_to_file</a></span><span class="op">(</span><span class="va">tbl_rmd</span>, <span class="va">file_out</span><span class="op">)</span></span></code></pre></div>
+<p>Read the file re-created with <code><a href="reference/combine_tbl_to_file.html">combine_tbl_to_file()</a></code> to verify it is a proper Rmd</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="va">file_out</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; title: dev_history.Rmd for working package</span></span>
+<span><span class="co">#&gt; output: html_document</span></span>
+<span><span class="co">#&gt; author: statnmap</span></span>
+<span><span class="co">#&gt; date: '2023-10-12'</span></span>
+<span><span class="co">#&gt; editor_options:</span></span>
+<span><span class="co">#&gt;   chunk_output_type: console</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ```{r development}</span></span>
+<span><span class="co">#&gt; #| include: no</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; library(testthat)</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; &lt;!--</span></span>
+<span><span class="co">#&gt; # Description of your package</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This will fill the description of your package.</span></span>
+<span><span class="co">#&gt; --&gt;</span></span>
+<span><span class="co">#&gt; ```{r description}</span></span>
+<span><span class="co">#&gt; # --&gt; for parse tests</span></span>
+<span><span class="co">#&gt; fusen::fill_description(</span></span>
+<span><span class="co">#&gt;     pkg = here::here(),</span></span>
+<span><span class="co">#&gt;     fields = list(</span></span>
+<span><span class="co">#&gt;         Title = "Build A Package From Rmarkdown file",</span></span>
+<span><span class="co">#&gt;         Description = "Use Rmarkdown First method to build your package. Start your package with documentation. Everything can be set from a Rmarkdown file in your project.",</span></span>
+<span><span class="co">#&gt;         `Authors@R` = c(</span></span>
+<span><span class="co">#&gt;             person("John", "Doe", email = "john@email.me", role = c("aut", "cre"), comment = c(ORCID = "0000-0000-0000-0000"))</span></span>
+<span><span class="co">#&gt;         )</span></span>
+<span><span class="co">#&gt;     )</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; # Define License with use_*_license()</span></span>
+<span><span class="co">#&gt; usethis::use_mit_license("John Doe")</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # Read data</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; &lt;!-- Store your dataset in a directory named "inst/" at the root of your project --&gt;</span></span>
+<span><span class="co">#&gt; &lt;!-- Use it for your tests in this Rmd thanks to `load_all()` to make it available</span></span>
+<span><span class="co">#&gt; and `system.file()` to read it in your examples </span></span>
+<span><span class="co">#&gt; --&gt;</span></span>
+<span><span class="co">#&gt; ```{r development-2}</span></span>
+<span><span class="co">#&gt; # Set error=TRUE for checks() if needed</span></span>
+<span><span class="co">#&gt; # Run all in the console directly</span></span>
+<span><span class="co">#&gt; # Create "inst/" directory</span></span>
+<span><span class="co">#&gt; dir.create(here::here("inst"))</span></span>
+<span><span class="co">#&gt; # Example dataset</span></span>
+<span><span class="co">#&gt; file.copy(system.file("nyc_squirrels_sample.csv", package = "fusen"), here::here("inst"))</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # Calculate the median of a vector</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Here is some inline R code : `r 1+1`</span></span>
+<span><span class="co">#&gt; ```{r function}</span></span>
+<span><span class="co">#&gt; #' My median</span></span>
+<span><span class="co">#&gt; #'</span></span>
+<span><span class="co">#&gt; #' @param x Vector of Numeric values</span></span>
+<span><span class="co">#&gt; #' @inheritParams stats::median</span></span>
+<span><span class="co">#&gt; #'</span></span>
+<span><span class="co">#&gt; #' @return</span></span>
+<span><span class="co">#&gt; #' Median of vector x</span></span>
+<span><span class="co">#&gt; #' @export</span></span>
+<span><span class="co">#&gt; #'</span></span>
+<span><span class="co">#&gt; #' @examples</span></span>
+<span><span class="co">#&gt; #' my_median(2:20)</span></span>
+<span><span class="co">#&gt; my_median &lt;- function(x, na.rm = TRUE) {</span></span>
+<span><span class="co">#&gt;     if (!is.numeric(x)) {</span></span>
+<span><span class="co">#&gt;         stop("x should be numeric")</span></span>
+<span><span class="co">#&gt;     }</span></span>
+<span><span class="co">#&gt;     stats::median(x, na.rm = na.rm)</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ```{r examples}</span></span>
+<span><span class="co">#&gt; my_median(1:12)</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ```{r tests}</span></span>
+<span><span class="co">#&gt; test_that("my_median works properly and show error if needed", {</span></span>
+<span><span class="co">#&gt;     expect_error(my_median("text"))</span></span>
+<span><span class="co">#&gt; })</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # Calculate the mean of a vector</span></span>
+<span><span class="co">#&gt; ## Use sub-functions in the same chunk</span></span>
+<span><span class="co">#&gt; ```{r function-1}</span></span>
+<span><span class="co">#&gt; #| filename: the_median_file</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; #' My Other median</span></span>
+<span><span class="co">#&gt; #'</span></span>
+<span><span class="co">#&gt; #' @param x Vector of Numeric values</span></span>
+<span><span class="co">#&gt; #' @inheritParams stats::median</span></span>
+<span><span class="co">#&gt; #'</span></span>
+<span><span class="co">#&gt; #' @return</span></span>
+<span><span class="co">#&gt; #' Median of vector x</span></span>
+<span><span class="co">#&gt; #' @export</span></span>
+<span><span class="co">#&gt; #'</span></span>
+<span><span class="co">#&gt; #' @examples</span></span>
+<span><span class="co">#&gt; my_other_median &lt;- function(x, na.rm = TRUE) {</span></span>
+<span><span class="co">#&gt;     if (!is.numeric(x)) {</span></span>
+<span><span class="co">#&gt;         stop("x should be numeric")</span></span>
+<span><span class="co">#&gt;     }</span></span>
+<span><span class="co">#&gt;     sub_median(x, na.rm = na.rm)</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; #' Core of the median not exported</span></span>
+<span><span class="co">#&gt; #' @param x Vector of Numeric values</span></span>
+<span><span class="co">#&gt; #' @inheritParams stats::median</span></span>
+<span><span class="co">#&gt; sub_median &lt;- function(x, na.rm = TRUE) {</span></span>
+<span><span class="co">#&gt;     stats::median(x, na.rm)</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ```{r examples-1}</span></span>
+<span><span class="co">#&gt; my_other_median(1:12)</span></span>
+<span><span class="co">#&gt; my_other_median(8:20)</span></span>
+<span><span class="co">#&gt; my_other_median(20:50)</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ```{r tests-1}</span></span>
+<span><span class="co">#&gt; test_that("my_median works properly and show error if needed", {</span></span>
+<span><span class="co">#&gt;     expect_true(my_other_median(1:12) == 6.5)</span></span>
+<span><span class="co">#&gt;     expect_error(my_other_median("text"))</span></span>
+<span><span class="co">#&gt; })</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; not a R chunk that should be kept in vignette, but not in code</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ```{r development-1}</span></span>
+<span><span class="co">#&gt; #| eval: no</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # Run but keep eval=FALSE to avoid infinite loop</span></span>
+<span><span class="co">#&gt; # Execute in the console directly</span></span>
+<span><span class="co">#&gt; fusen::inflate(flat_file = "dev/dev_history.Rmd")</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # Inflate your package</span></span>
+<span><span class="co">#&gt; ```{r}</span></span>
+<span><span class="co">#&gt; # duplicate empty name</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ```{r}</span></span>
+<span><span class="co">#&gt; # duplicate empty name</span></span>
+<span><span class="co">#&gt; ```</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; You're one inflate from paper to box.</span></span>
+<span><span class="co">#&gt; Build your package from this very Rmd using `fusen::inflate()`</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; - Verify your `"DESCRIPTION"` file has been updated</span></span>
+<span><span class="co">#&gt; - Verify your function is in `"R/"` directory</span></span>
+<span><span class="co">#&gt; - Verify your test is in `"tests/testthat/"` directory</span></span>
+<span><span class="co">#&gt; - Verify this Rmd appears in `"vignettes/"` directory</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
