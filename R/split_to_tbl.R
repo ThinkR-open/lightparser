@@ -59,14 +59,27 @@ split_to_tbl <- function(file) {
       "It seems you are currently knitting a Rmd/Qmd file.",
       " The parsing of the file will be done in a new R session."
     )
-    tempfile_code_in <- tempfile(fileext = ".R")
-    tempfile_data_in <- tempfile()
-    tempfile_data_out <- tempfile()
+    tempfile_code_in <- normalizePath(
+      tempfile(fileext = ".R"),
+      mustWork = FALSE,
+      winslash = "/"
+    )
+    tempfile_data_in <- normalizePath(
+      tempfile(fileext = ".R"),
+      mustWork = FALSE,
+      winslash = "/"
+    )
+    tempfile_data_out <- normalizePath(
+      tempfile(fileext = ".R"),
+      mustWork = FALSE,
+      winslash = "/"
+    )
 
     dput(rmd_lines_no_yaml, file = tempfile_data_in)
     code_to_run <- sprintf(
       paste(
         c(
+          "cat('Run in external session\n')",
           "rmd_lines_no_yaml <- dget('%s')",
           "res_split <- getFromNamespace('knitr_split', 'lightparser')(
             rmd_lines_no_yaml)",
@@ -78,14 +91,17 @@ split_to_tbl <- function(file) {
       tempfile_data_out
     )
     cat(code_to_run, file = tempfile_code_in)
+    # Use bin/R and not bin/Rscript as 
+    # it does not work on Windows...
+    # For unknown reason
     outsystem <- system(
       paste0(
-        normalizePath(file.path(Sys.getenv("R_HOME"), "bin", "Rscript"),
+        normalizePath(file.path(Sys.getenv("R_HOME"), "bin", "R"),
           mustWork = FALSE
         ),
-        " '",
+        ' -e source(\\"',
         tempfile_code_in,
-        "'"
+        '\\")'
       )
     )
     res_split <- dget(tempfile_data_out)
