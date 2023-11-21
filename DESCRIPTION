@@ -12,6 +12,7 @@ License: MIT + file LICENSE
 URL: https://github.com/ThinkR-open/lightparser
 BugReports: https://github.com/ThinkR-open/lightparser/issues
 Imports: 
+    callr,
     knitr,
     tibble,
     tidyr,
