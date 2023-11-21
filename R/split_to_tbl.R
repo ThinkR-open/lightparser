@@ -80,9 +80,10 @@ split_to_tbl <- function(file) {
     cat(code_to_run, file = tempfile_code_in)
     outsystem <- system(
       paste0(
-        normalizePath(file.path(Sys.getenv("R_HOME"), "bin", "Rscript '"),
+        normalizePath(file.path(Sys.getenv("R_HOME"), "bin", "Rscript"),
           mustWork = FALSE
         ),
+        " '",
         tempfile_code_in,
         "'"
       )
