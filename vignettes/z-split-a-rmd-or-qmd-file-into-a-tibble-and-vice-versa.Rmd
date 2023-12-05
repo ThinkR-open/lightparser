@@ -42,8 +42,10 @@ file <- system.file(
 split_to_tbl(file)
 ```
 
-# combine_tbl_to_file
+# Combine a parsed tbl Rmd / Qmd file into a new file
 
+You can re-create the Rmd/Qmd file from the tibble returned by `split_to_tbl()`.
+As this is a tibble, before combining it as a new file, you can modify its content by removing or adding rows, replacing content, etc.
     
 
   
@@ -52,8 +54,12 @@ split_to_tbl(file)
 file <- system.file("dev-template-parsing.Rmd",
   package = "lightparser"
 )
+# split first
 tbl_rmd <- split_to_tbl(file)
-combine_tbl_to_file(tbl_rmd, tempfile(fileext = ".Rmd"))
+# apply your filters
+tbl_rmd_filtered <- tbl_rmd[-5, ]
+# combine then
+combine_tbl_to_file(tbl_rmd_filtered, tempfile(fileext = ".Rmd"))
 ```
 
   

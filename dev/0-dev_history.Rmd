@@ -75,6 +75,9 @@ usethis::use_pipe()
 
 # package-level documentation
 usethis::use_package_doc()
+
+# New testthat version
+usethis::use_testthat()
 ```
 
 ## Use everytime needed
@@ -92,6 +95,10 @@ attachment::att_amend_desc(
 
 # Check the package
 devtools::check()
+
+# Clean the code
+styler::style_pkg()
+styler::style_dir("dev/")
 
 # Add a new flat template
 fusen::add_flat_template("add")

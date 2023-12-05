@@ -22,12 +22,8 @@ knitr::opts_chunk$set(
 
 You need to extract some specific information from your Rmd or Qmd file?
 {lightparser} is designed to split your Rmd or Qmd file by sections into a tibble: titles, text, chunks.
-It stores them as a tibble, so you can easily manipulate it with dplyr or purrr.
+It stores them as a tibble, so you can easily manipulate it with {dplyr} or {purrr}.
 Later, you can rebuild a Rmd or Qmd from the tibble.
-
-This is a light version of {parsermd} that has not been updated for a long time, 
-and which is not compatible with the latest versions of C++ compilers.
-{lightparser} does not rely on C++ compilation.
 
 ## Installation
 
@@ -47,10 +43,7 @@ Full documentation website on: https://ThinkR-open.github.io/lightparser
 
 Split your Rmd or Qmd file into a tibble:
 
-```{r}
-knitr::opts_knit$get("out.format")
-
-
+```{r, message=FALSE}
 library(lightparser)
 
 file <- system.file(
@@ -74,6 +67,13 @@ Read the file re-created with `combine_tbl_to_file()` to verify it is a proper R
 ```{r}
 cat(readLines(file_out), sep = "\n")
 ```
+
+## Similar work
+
+{lightparser} is a light version of {parsermd} that has not been updated for a long time, 
+and which is not compatible with the latest versions of C++ compilers.
+{lightparser} does not rely on C++ compilation.
+
 ## Code of Conduct
 
 Please note that the lightparser project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

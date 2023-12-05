@@ -13,12 +13,8 @@ coverage](https://codecov.io/gh/ThinkR-open/lightparser/branch/main/graph/badge.
 You need to extract some specific information from your Rmd or Qmd file?
 {lightparser} is designed to split your Rmd or Qmd file by sections into
 a tibble: titles, text, chunks. It stores them as a tibble, so you can
-easily manipulate it with dplyr or purrr. Later, you can rebuild a Rmd
-or Qmd from the tibble.
-
-This is a light version of {parsermd} that has not been updated for a
-long time, and which is not compatible with the latest versions of C++
-compilers. {lightparser} does not rely on C++ compilation.
+easily manipulate it with {dplyr} or {purrr}. Later, you can rebuild a
+Rmd or Qmd from the tibble.
 
 ## Installation
 
@@ -40,10 +36,6 @@ Full documentation website on:
 Split your Rmd or Qmd file into a tibble:
 
 ``` r
-knitr::opts_knit$get("out.format")
-#> [1] "markdown"
-
-
 library(lightparser)
 
 file <- system.file(
@@ -53,7 +45,6 @@ file <- system.file(
 
 
 tbl_rmd <- split_to_tbl(file)
-#> It seems you are currently knitting a Rmd/Qmd file. The parsing of the file will be done in a new R session.
 tbl_rmd
 #> # A tibble: 35 × 6
 #>    type    label       params           text         code       heading         
@@ -254,6 +245,12 @@ cat(readLines(file_out), sep = "\n")
 #> - Verify your test is in `"tests/testthat/"` directory
 #> - Verify this Rmd appears in `"vignettes/"` directory
 ````
+
+## Similar work
+
+{lightparser} is a light version of {parsermd} that has not been updated
+for a long time, and which is not compatible with the latest versions of
+C++ compilers. {lightparser} does not rely on C++ compilation.
 
 ## Code of Conduct
 

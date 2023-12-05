@@ -13,6 +13,7 @@ URL: https://github.com/ThinkR-open/lightparser
 BugReports: https://github.com/ThinkR-open/lightparser/issues
 Imports: 
     knitr,
+    rlang,
     tibble,
     tidyr,
     utils,
@@ -20,10 +21,11 @@ Imports:
 Suggests: 
     callr,
     rmarkdown,
-    testthat
+    testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
 Config/fusen/version: 0.5.2.9000
+Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3

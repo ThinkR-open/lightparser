@@ -9,8 +9,12 @@
 #' file <- system.file("dev-template-parsing.Rmd",
 #'   package = "lightparser"
 #' )
+#' # split first
 #' tbl_rmd <- split_to_tbl(file)
-#' combine_tbl_to_file(tbl_rmd, tempfile(fileext = ".Rmd"))
+#' # apply your filters
+#' tbl_rmd_filtered <- tbl_rmd[-5, ]
+#' # combine then
+#' combine_tbl_to_file(tbl_rmd_filtered, tempfile(fileext = ".Rmd"))
 get_content_parsedtbl <- function(parsed_tbl) {
   parsed_tbl$content <-
     apply(
@@ -116,7 +120,8 @@ combine_tbl_to_file <- function(parsed_tbl, output_file) {
 
   if (!missing(output_file)) {
     writeLines(enc2utf8(parsed_tbl$content), con = output_file)
+    return(invisible(full_content))
+  } else {
+    return(full_content)
   }
-
-  return(full_content)
 }

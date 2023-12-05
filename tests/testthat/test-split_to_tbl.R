@@ -18,7 +18,7 @@ test_that("split_to_tbl gets yaml header data", {
   expect_equal(tbl_rmd[["params"]][[w_yaml]]$date, "2023-10-12")
 })
 
-# Find all headings
+# Find all headings ----
 headings <- c(
   "Description of your package",
   "Read data",

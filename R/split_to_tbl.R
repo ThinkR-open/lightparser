@@ -57,6 +57,8 @@ split_to_tbl <- function(file) {
       "It seems you are currently knitting a Rmd/Qmd file.",
       " The parsing of the file will be done in a new R session."
     )
+    rlang::check_installed("callr", reason = "to extract Rmd when knitting")
+
     res_split <- callr::r(function() knitr_split(rmd_lines_no_yaml),
       package = TRUE
     )

@@ -74,7 +74,7 @@ split_to_tbl <- function(file) {
       "It seems you are currently knitting a Rmd/Qmd file.",
       " The parsing of the file will be done in a new R session."
     )
-    rlang::check_installed("callr2", reason = "to extract Rmd when knitting")
+    rlang::check_installed("callr", reason = "to extract Rmd when knitting")
 
     res_split <- callr::r(function() knitr_split(rmd_lines_no_yaml),
       package = TRUE
@@ -304,7 +304,7 @@ test_that("split_to_tbl gets yaml header data", {
   expect_equal(tbl_rmd[["params"]][[w_yaml]]$date, "2023-10-12")
 })
 
-# Find all headings
+# Find all headings ----
 headings <- c(
   "Description of your package",
   "Read data",
@@ -395,7 +395,10 @@ test_that(
 )
 ```
 
-# combine_tbl_to_file
+# Combine a parsed tbl Rmd / Qmd file into a new file
+
+You can re-create the Rmd/Qmd file from the tibble returned by `split_to_tbl()`.
+As this is a tibble, before combining it as a new file, you can modify its content by removing or adding rows, replacing content, etc.
     
 ```{r function-combine_tbl_to_file}
 #' Prepare all content from parsedtbl to be combined into a Rmd file
@@ -508,9 +511,10 @@ combine_tbl_to_file <- function(parsed_tbl, output_file) {
 
   if (!missing(output_file)) {
     writeLines(enc2utf8(parsed_tbl$content), con = output_file)
+    return(invisible(full_content))
+  } else {
+    return(full_content)
   }
-
-  return(full_content)
 }
 ```
   
@@ -518,15 +522,19 @@ combine_tbl_to_file <- function(parsed_tbl, output_file) {
 file <- system.file("dev-template-parsing.Rmd",
   package = "lightparser"
 )
+# split first
 tbl_rmd <- split_to_tbl(file)
-combine_tbl_to_file(tbl_rmd, tempfile(fileext = ".Rmd"))
+# apply your filters
+tbl_rmd_filtered <- tbl_rmd[-5, ]
+# combine then
+combine_tbl_to_file(tbl_rmd_filtered, tempfile(fileext = ".Rmd"))
 ```
   
 ```{r tests-combine_tbl_to_file}
-file <- system.file("dev-template-parsing.Rmd",
+rmd_input_file <- system.file("dev-template-parsing.Rmd",
   package = "lightparser"
 )
-tbl_rmd <- split_to_tbl(file)
+tbl_rmd <- split_to_tbl(rmd_input_file)
 tbl_rmd_content <- get_content_parsedtbl(tbl_rmd)
 
 test_that("get_content_parsedtbl can create the Rmd content for each type", {
@@ -586,7 +594,7 @@ test_that("combine_tbl_to_file perfectly recreates the content of R chunks", {
   temp_purl_original <-
     suppressMessages(
       knitr::purl(
-        file,
+        rmd_input_file,
         output = tempfile(fileext = ".Rmd"),
         documentation = 0,
         quiet = TRUE
@@ -604,8 +612,30 @@ test_that("combine_tbl_to_file perfectly recreates the content of R chunks", {
   expect_equal(readLines(temp_purl_output), readLines(temp_purl_original))
 })
 
-# TODO - Test if quarto is exactly the same before and after split and combine
-# using template dev-template-tests.qmd
+# Test if we can correctly rebuild after removing some rows
+test_that("combine_tbl_to_file is correct after removing some rows", {
+  tbl_rmd_content_removed <- tbl_rmd_content[-c(1:10), ]
+
+  input_content <- readLines(rmd_input_file)
+  input_content_filtered <- input_content[-c(1:42)]
+
+  output_content_file <- tempfile(fileext = ".Rmd")
+  combine_tbl_to_file(
+    tbl_rmd_content_removed,
+    output_file = output_content_file
+  )
+  output_content <- readLines(output_content_file)
+
+  # Compare without empty lines
+  output_content_noempty <- output_content[!grepl("^$", output_content)]
+  input_content_noempty <- input_content_filtered[
+    !grepl("^$", input_content_filtered)
+  ]
+  expect_equal(
+    object = output_content_noempty,
+    expected = input_content_noempty
+  )
+})
 ```
   
 

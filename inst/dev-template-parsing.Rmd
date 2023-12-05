@@ -132,7 +132,8 @@ not a R chunk that should be kept in vignette, but not in code
 ```
 
 
-```{r development-1, eval=FALSE}
+```{r development-1}
+#| eval: no
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
 fusen::inflate(flat_file = "dev/dev_history.Rmd")
