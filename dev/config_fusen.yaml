@@ -14,4 +14,4 @@ flat_split_combine.Rmd:
     open_vignette: false
     check: false
     document: true
-    overwrite: ask
+    overwrite: 'yes'

@@ -26,7 +26,7 @@ split_to_tbl <- function(file) {
   # Get yaml header
   if (!grepl("^---$", rmd_lines[1])) {
     stop(
-      "Flat file parsed needs to have a yaml header",
+      "Rmd/Qmd file parsed needs to have a yaml header",
       " starting from line 1 with: ---"
     )
   }
@@ -65,23 +65,39 @@ split_to_tbl <- function(file) {
   }
 
   res_split$text <- lapply(res_split$text, split_headers_from_text)
-  res_split <- tidyr::unnest(res_split, cols = text)
-  # Get headings
-  res_split$heading <- sapply(
+  # res_split_unnested <- tidyr::unnest(res_split, cols = text)
+
+  # duplicate rows according to number of elements in "text"
+  res_split_unnested <- res_split[rep(
     seq_len(nrow(res_split)),
+    lengths(res_split$text)
+  ), ]
+  # replace "text" by the proper not duplicated element of "text"
+  which_element <- unlist(sapply(lengths(res_split$text), seq_len))
+  res_split_unnested$text <- sapply(
+    seq_len(nrow(res_split_unnested)),
     function(x) {
-      if (grepl("heading", names(res_split$text)[x])) {
-        gsub("^#*\\s*", "", res_split$text[x])
+      res_split_unnested$text[[x]][which_element[x]]
+    }
+  )
+
+
+  # Get headings
+  res_split_unnested$heading <- sapply(
+    seq_len(nrow(res_split_unnested)),
+    function(x) {
+      if (grepl("heading", names(res_split_unnested$text)[x])) {
+        gsub("^#*\\s*", "", res_split_unnested$text[x])
       } else {
         NA
       }
     }
   )
 
-  res_split$type[!is.na(res_split$heading)] <- "heading"
+  res_split_unnested$type[!is.na(res_split_unnested$heading)] <- "heading"
 
   # Put back yaml in 'res'
-  res_full <- rbind(yaml_tbl, res_split)
+  res_full <- rbind(yaml_tbl, res_split_unnested)
 
   return(res_full)
 }
