@@ -39,7 +39,9 @@ split_to_tbl <- function(file) {
     params = list(yaml_content),
     text = NA,
     code = NA,
-    heading = NA
+    heading = NA,
+    heading_level = NA,
+    section = NA
   )
 
   # Get the rest of the document without yaml
@@ -65,7 +67,6 @@ split_to_tbl <- function(file) {
   }
 
   res_split$text <- lapply(res_split$text, split_headers_from_text)
-  # res_split_unnested <- tidyr::unnest(res_split, cols = text)
 
   # duplicate rows according to number of elements in "text"
   res_split_unnested <- res_split[rep(
@@ -81,18 +82,43 @@ split_to_tbl <- function(file) {
     }
   )
 
-
   # Get headings
   res_split_unnested$heading <- sapply(
     seq_len(nrow(res_split_unnested)),
     function(x) {
-      if (grepl("heading", names(res_split_unnested$text)[x])) {
+      if (grepl("-heading-", names(res_split_unnested$text)[x])) {
         gsub("^#*\\s*", "", res_split_unnested$text[x])
       } else {
         NA
       }
     }
   )
+
+  # Get level according to heading name
+  res_split_unnested$heading_level <- sapply(
+    seq_len(nrow(res_split_unnested)),
+    function(x) {
+      if (grepl("-heading-", names(res_split_unnested$text)[x])) {
+        # extract level number after heading in names
+        as.numeric(
+          gsub(
+            "^.*-heading-level-([0-9]+)$",
+            "\\1",
+            names(res_split_unnested$text)[x]
+          )
+        )
+      } else {
+        NA
+      }
+    }
+  )
+
+  # Get section according to heading : duplicate headings down the column
+  change_heading <- cumsum(!is.na(res_split_unnested$heading))
+  change_heading[change_heading == 0] <- NA
+  res_split_unnested$section <- res_split_unnested$heading[
+    !is.na(res_split_unnested$heading)
+  ][change_heading]
 
   res_split_unnested$type[!is.na(res_split_unnested$heading)] <- "heading"
 
@@ -183,6 +209,10 @@ knitr_split <- function(rmd_lines_no_yaml) {
 split_headers_from_text <- function(the_text) {
   new_group <- rep(FALSE, length(the_text))
   which_header <- grep("^#", the_text)
+  which_level <-
+    sapply(the_text[which_header], function(x) {
+      nchar(gsub("[^#]", "", x))
+    })
   if (length(which_header) != 0) {
     new_group[which_header] <- TRUE
     # Change group just after header
@@ -193,7 +223,8 @@ split_headers_from_text <- function(the_text) {
       new_group[which_header_plus] <- TRUE
     }
     groups <- cumsum(new_group)
-    groups[which_header] <- paste0(groups[which_header], "-heading")
+    groups[which_header] <-
+      paste0(groups[which_header], "-heading-level-", which_level)
 
     split_text <- split(the_text, groups)
   } else {

@@ -31,6 +31,20 @@ headings <- c(
 test_that("split_to_tbl gets titles in markdown part only", {
   expect_equal(sum(tbl_rmd[["type"]] == "heading"), 6)
   expect_equal(tbl_rmd[["heading"]][!is.na(tbl_rmd[["heading"]])], headings)
+  expect_equal(
+    tbl_rmd[["heading_level"]][!is.na(tbl_rmd[["heading"]])],
+    c(1, 1, 1, 1, 2, 1)
+  )
+})
+
+test_that("split_to_tbl gets proper sections with headings", {
+  expect_equal(
+    tbl_rmd[["section"]],
+    rep(
+      c(NA, headings),
+      times = c(4, 4, 4, 8, 1, 9, 5)
+    )
+  )
 })
 
 test_that("split_to_tbl gets text parts without titles", {
@@ -91,7 +105,7 @@ test_that("split_to_tbl - chunk code extracted contains R code only", {
 })
 
 test_that(
-  "split_to_tbl gets does not increment unnamed-chunks id when run a 2nd time",
+  "split_to_tbl does not increment unnamed-chunks id when run a 2nd time",
   {
     tbl_rmd <- split_to_tbl(file)
     tbl_rmd <- split_to_tbl(file) # 2nd time
