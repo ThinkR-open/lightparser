@@ -1,0 +1,6 @@
+---
+title: "dev_history.Rmd for working package"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---

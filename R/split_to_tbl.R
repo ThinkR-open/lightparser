@@ -47,6 +47,11 @@ split_to_tbl <- function(file) {
   # Get the rest of the document without yaml
   rmd_lines_no_yaml <- rmd_lines[-c(yaml_begin:yaml_end)]
 
+  if (length(rmd_lines_no_yaml) == 0) {
+    # yaml only
+    return(yaml_tbl)
+  }
+
   # Are we inside a Rmd/Qmd that is currently knitted ?
   # If so, we cannot use knitr::split_file() in the current session
   # because it will affect the hidden knit environment variables.
@@ -86,7 +91,7 @@ split_to_tbl <- function(file) {
   res_split_unnested$heading <- sapply(
     seq_len(nrow(res_split_unnested)),
     function(x) {
-      if (grepl("-heading-", names(res_split_unnested$text)[x])) {
+      if (isTRUE(grepl("-heading-", names(res_split_unnested$text)[x]))) {
         gsub("^#*\\s*", "", res_split_unnested$text[x])
       } else {
         NA
@@ -98,7 +103,7 @@ split_to_tbl <- function(file) {
   res_split_unnested$heading_level <- sapply(
     seq_len(nrow(res_split_unnested)),
     function(x) {
-      if (grepl("-heading-", names(res_split_unnested$text)[x])) {
+      if (!is.na(res_split_unnested$heading[x])) {
         # extract level number after heading in names
         as.numeric(
           gsub(

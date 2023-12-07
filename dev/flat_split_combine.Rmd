@@ -64,6 +64,11 @@ split_to_tbl <- function(file) {
   # Get the rest of the document without yaml
   rmd_lines_no_yaml <- rmd_lines[-c(yaml_begin:yaml_end)]
 
+  if (length(rmd_lines_no_yaml) == 0) {
+    # yaml only
+    return(yaml_tbl)
+  }
+
   # Are we inside a Rmd/Qmd that is currently knitted ?
   # If so, we cannot use knitr::split_file() in the current session
   # because it will affect the hidden knit environment variables.
@@ -103,7 +108,7 @@ split_to_tbl <- function(file) {
   res_split_unnested$heading <- sapply(
     seq_len(nrow(res_split_unnested)),
     function(x) {
-      if (grepl("-heading-", names(res_split_unnested$text)[x])) {
+      if (isTRUE(grepl("-heading-", names(res_split_unnested$text)[x]))) {
         gsub("^#*\\s*", "", res_split_unnested$text[x])
       } else {
         NA
@@ -115,7 +120,7 @@ split_to_tbl <- function(file) {
   res_split_unnested$heading_level <- sapply(
     seq_len(nrow(res_split_unnested)),
     function(x) {
-      if (grepl("-heading-", names(res_split_unnested$text)[x])) {
+      if (!is.na(res_split_unnested$heading[x])) {
         # extract level number after heading in names
         as.numeric(
           gsub(
@@ -454,6 +459,35 @@ test_that(
     )
   }
 )
+```
+
+<!-- 
+# Test other formats
+-->
+
+```{r tests, filename="special-rmd-formats"}
+# Test other formats
+file <- system.file("dev-yaml-only.Rmd",
+  package = "lightparser"
+)
+# debugonce(split_to_tbl)
+test_that("yaml only file works", {
+  expect_error(tbl_rmd <- split_to_tbl(file), regexp = NA)
+  expect_true(nrow(tbl_rmd) == 1)
+  expect_equal(tbl_rmd[["type"]], "yaml")
+  expect_equal(length(tbl_rmd[["params"]][[1]]), 3)
+})
+
+# Test other formats
+file <- system.file("example-no-headers.qmd",
+  package = "lightparser"
+)
+
+test_that("file with no headers is good", {
+  expect_error(tbl_rmd <- split_to_tbl(file), regexp = NA)
+  expect_true(nrow(tbl_rmd) == 7)
+  expect_true(all(is.na(tbl_rmd[["heading"]])))
+})
 ```
 
 # Combine a parsed tbl Rmd / Qmd file into a new file

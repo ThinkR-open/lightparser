@@ -42,6 +42,13 @@ file <- system.file(
 split_to_tbl(file)
 ```
 
+<!-- 
+
+# Test other formats
+
+-->
+
+
 # Combine a parsed tbl Rmd / Qmd file into a new file
 
 You can re-create the Rmd/Qmd file from the tibble returned by `split_to_tbl()`.
