@@ -112,19 +112,19 @@
 <span></span>
 <span><span class="va">tbl_rmd</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/split_to_tbl.html">split_to_tbl</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
 <span><span class="va">tbl_rmd</span></span>
-<span><span class="co">#&gt; # A tibble: 35 × 6</span></span>
-<span><span class="co">#&gt;    type    label       params           text         code       heading         </span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;       &lt;list&gt;           &lt;named list&gt; &lt;list&gt;     &lt;chr&gt;           </span></span>
-<span><span class="co">#&gt;  1 yaml    &lt;NA&gt;        &lt;named list [5]&gt; &lt;lgl [1]&gt;    &lt;lgl [1]&gt;  &lt;NA&gt;            </span></span>
-<span><span class="co">#&gt;  2 inline  &lt;NA&gt;        &lt;lgl [1]&gt;        &lt;chr [0]&gt;    &lt;lgl [1]&gt;  &lt;NA&gt;            </span></span>
-<span><span class="co">#&gt;  3 block   development &lt;named list [2]&gt; &lt;lgl [1]&gt;    &lt;chr [1]&gt;  &lt;NA&gt;            </span></span>
-<span><span class="co">#&gt;  4 inline  &lt;NA&gt;        &lt;lgl [1]&gt;        &lt;chr [2]&gt;    &lt;lgl [1]&gt;  &lt;NA&gt;            </span></span>
-<span><span class="co">#&gt;  5 heading &lt;NA&gt;        &lt;lgl [1]&gt;        &lt;chr [1]&gt;    &lt;lgl [1]&gt;  Description of …</span></span>
-<span><span class="co">#&gt;  6 inline  &lt;NA&gt;        &lt;lgl [1]&gt;        &lt;chr [3]&gt;    &lt;lgl [1]&gt;  &lt;NA&gt;            </span></span>
-<span><span class="co">#&gt;  7 block   description &lt;named list [1]&gt; &lt;lgl [1]&gt;    &lt;chr [13]&gt; &lt;NA&gt;            </span></span>
-<span><span class="co">#&gt;  8 inline  &lt;NA&gt;        &lt;lgl [1]&gt;        &lt;chr [1]&gt;    &lt;lgl [1]&gt;  &lt;NA&gt;            </span></span>
-<span><span class="co">#&gt;  9 heading &lt;NA&gt;        &lt;lgl [1]&gt;        &lt;chr [1]&gt;    &lt;lgl [1]&gt;  Read data       </span></span>
-<span><span class="co">#&gt; 10 inline  &lt;NA&gt;        &lt;lgl [1]&gt;        &lt;chr [5]&gt;    &lt;lgl [1]&gt;  &lt;NA&gt;            </span></span>
+<span><span class="co">#&gt; # A tibble: 35 × 8</span></span>
+<span><span class="co">#&gt;    type    label       params       text     code  heading heading_level section</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;       &lt;list&gt;       &lt;named &gt; &lt;lis&gt; &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;  </span></span>
+<span><span class="co">#&gt;  1 yaml    &lt;NA&gt;        &lt;named list&gt; &lt;lgl&gt;    &lt;lgl&gt; &lt;NA&gt;               NA &lt;NA&gt;   </span></span>
+<span><span class="co">#&gt;  2 inline  &lt;NA&gt;        &lt;lgl [1]&gt;    &lt;chr&gt;    &lt;lgl&gt; &lt;NA&gt;               NA &lt;NA&gt;   </span></span>
+<span><span class="co">#&gt;  3 block   development &lt;named list&gt; &lt;lgl&gt;    &lt;chr&gt; &lt;NA&gt;               NA &lt;NA&gt;   </span></span>
+<span><span class="co">#&gt;  4 inline  &lt;NA&gt;        &lt;lgl [1]&gt;    &lt;chr&gt;    &lt;lgl&gt; &lt;NA&gt;               NA &lt;NA&gt;   </span></span>
+<span><span class="co">#&gt;  5 heading &lt;NA&gt;        &lt;lgl [1]&gt;    &lt;chr&gt;    &lt;lgl&gt; Descri…             1 Descri…</span></span>
+<span><span class="co">#&gt;  6 inline  &lt;NA&gt;        &lt;lgl [1]&gt;    &lt;chr&gt;    &lt;lgl&gt; &lt;NA&gt;               NA Descri…</span></span>
+<span><span class="co">#&gt;  7 block   description &lt;named list&gt; &lt;lgl&gt;    &lt;chr&gt; &lt;NA&gt;               NA Descri…</span></span>
+<span><span class="co">#&gt;  8 inline  &lt;NA&gt;        &lt;lgl [1]&gt;    &lt;chr&gt;    &lt;lgl&gt; &lt;NA&gt;               NA Descri…</span></span>
+<span><span class="co">#&gt;  9 heading &lt;NA&gt;        &lt;lgl [1]&gt;    &lt;chr&gt;    &lt;lgl&gt; Read d…             1 Read d…</span></span>
+<span><span class="co">#&gt; 10 inline  &lt;NA&gt;        &lt;lgl [1]&gt;    &lt;chr&gt;    &lt;lgl&gt; &lt;NA&gt;               NA Read d…</span></span>
 <span><span class="co">#&gt; # ℹ 25 more rows</span></span></code></pre></div>
 <p>Combine the tibble into a Rmd or Qmd file:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
