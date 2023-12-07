@@ -46,19 +46,19 @@ file <- system.file(
 
 tbl_rmd <- split_to_tbl(file)
 tbl_rmd
-#> # A tibble: 35 × 6
-#>    type    label       params           text         code       heading         
-#>    <chr>   <chr>       <list>           <named list> <list>     <chr>           
-#>  1 yaml    <NA>        <named list [5]> <lgl [1]>    <lgl [1]>  <NA>            
-#>  2 inline  <NA>        <lgl [1]>        <chr [0]>    <lgl [1]>  <NA>            
-#>  3 block   development <named list [2]> <lgl [1]>    <chr [1]>  <NA>            
-#>  4 inline  <NA>        <lgl [1]>        <chr [2]>    <lgl [1]>  <NA>            
-#>  5 heading <NA>        <lgl [1]>        <chr [1]>    <lgl [1]>  Description of …
-#>  6 inline  <NA>        <lgl [1]>        <chr [3]>    <lgl [1]>  <NA>            
-#>  7 block   description <named list [1]> <lgl [1]>    <chr [13]> <NA>            
-#>  8 inline  <NA>        <lgl [1]>        <chr [1]>    <lgl [1]>  <NA>            
-#>  9 heading <NA>        <lgl [1]>        <chr [1]>    <lgl [1]>  Read data       
-#> 10 inline  <NA>        <lgl [1]>        <chr [5]>    <lgl [1]>  <NA>            
+#> # A tibble: 35 × 8
+#>    type    label       params       text     code  heading heading_level section
+#>    <chr>   <chr>       <list>       <named > <lis> <chr>           <dbl> <chr>  
+#>  1 yaml    <NA>        <named list> <lgl>    <lgl> <NA>               NA <NA>   
+#>  2 inline  <NA>        <lgl [1]>    <chr>    <lgl> <NA>               NA <NA>   
+#>  3 block   development <named list> <lgl>    <chr> <NA>               NA <NA>   
+#>  4 inline  <NA>        <lgl [1]>    <chr>    <lgl> <NA>               NA <NA>   
+#>  5 heading <NA>        <lgl [1]>    <chr>    <lgl> Descri…             1 Descri…
+#>  6 inline  <NA>        <lgl [1]>    <chr>    <lgl> <NA>               NA Descri…
+#>  7 block   description <named list> <lgl>    <chr> <NA>               NA Descri…
+#>  8 inline  <NA>        <lgl [1]>    <chr>    <lgl> <NA>               NA Descri…
+#>  9 heading <NA>        <lgl [1]>    <chr>    <lgl> Read d…             1 Read d…
+#> 10 inline  <NA>        <lgl [1]>    <chr>    <lgl> <NA>               NA Read d…
 #> # ℹ 25 more rows
 ```
 
