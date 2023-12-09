@@ -6,6 +6,7 @@ flat_split_combine.Rmd:
   - R/split_to_tbl.R
   tests:
   - tests/testthat/test-split_to_tbl.R
+  - tests/testthat/test-split_headers_from_text.R
   - tests/testthat/test-special-rmd-formats.R
   - tests/testthat/test-combine_tbl_to_file.R
   vignettes: vignettes/z-split-a-rmd-or-qmd-file-into-a-tibble-and-vice-versa.Rmd

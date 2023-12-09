@@ -229,7 +229,11 @@ split_headers_from_text <- function(the_text) {
     if (length(which_header_plus) != 0) {
       new_group[which_header_plus] <- TRUE
     }
-    groups <- cumsum(new_group)
+    groups <- formatC(
+      cumsum(new_group),
+      width = max(nchar(cumsum(new_group))),
+      flag = "0"
+    )
     groups[which_header] <-
       paste0(groups[which_header], "-heading-level-", which_level)
 

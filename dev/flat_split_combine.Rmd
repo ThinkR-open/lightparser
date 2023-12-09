@@ -241,7 +241,11 @@ split_headers_from_text <- function(the_text) {
     if (length(which_header_plus) != 0) {
       new_group[which_header_plus] <- TRUE
     }
-    groups <- cumsum(new_group)
+    groups <- formatC(
+      cumsum(new_group),
+      width = max(nchar(cumsum(new_group))),
+      flag = "0"
+    )
     groups[which_header] <-
       paste0(groups[which_header], "-heading-level-", which_level)
 
@@ -458,6 +462,53 @@ test_that(
 )
 ```
 
+<!--
+# split_headers_from_text
+---> 
+```{r tests-split-headers, filename = "split_headers_from_text"}
+# Problem when more that 10 groups, as 10 is between 1 and 2
+text_to_test <- c(
+  "# Title 1",
+  "Text 1",
+  "## Title 2",
+  "Text 2",
+  "Other text",
+  "# Title 3",
+  "Text 3",
+  "## Title 4",
+  "Text 4",
+  "### Title 5",
+  "Text 5",
+  "### Title 6",
+  "Text 6"
+)
+
+test_that("long text section are correctly splitted", {
+  expect_error(
+    splited <- split_headers_from_text(text_to_test),
+    regexp = NA
+  )
+
+  expected_splited <- list(
+    `01-heading-level-1` = "# Title 1",
+    `02` = "Text 1",
+    `03-heading-level-2` = "## Title 2",
+    `04` = c("Text 2", "Other text"),
+    `05-heading-level-1` = "# Title 3",
+    `06` = "Text 3",
+    `07-heading-level-2` = "## Title 4",
+    `08` = "Text 4",
+    `09-heading-level-3` = "### Title 5",
+    `10` = "Text 5",
+    `11-heading-level-3` = "### Title 6",
+    `12` = "Text 6"
+  )
+
+  expect_equal(splited, expected_splited)
+})
+```
+
+
 <!-- 
 # Test other formats
 -->
@@ -512,11 +563,11 @@ combine_tbl_to_file <- function(parsed_tbl, output_file) {
     )
   }
 
-  parsed_tbl <- get_content_parsedtbl(parsed_tbl)
-  full_content <- paste0(parsed_tbl$content, collapse = "\n")
+  parsed_tbl_content <- get_content_parsedtbl(parsed_tbl)
+  full_content <- paste0(parsed_tbl_content$content, collapse = "\n")
 
   if (!missing(output_file)) {
-    writeLines(enc2utf8(parsed_tbl$content), con = output_file)
+    writeLines(enc2utf8(full_content), con = output_file)
     return(invisible(full_content))
   } else {
     return(full_content)
@@ -730,6 +781,10 @@ test_that("combine_tbl_to_file is correct after removing some rows", {
 })
 ```
   
+
+<!--
+# Combine other formats
+-->
 
 ```{r development-inflate, eval=FALSE}
 fusen::inflate(

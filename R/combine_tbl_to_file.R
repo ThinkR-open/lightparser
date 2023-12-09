@@ -29,11 +29,11 @@ combine_tbl_to_file <- function(parsed_tbl, output_file) {
     )
   }
 
-  parsed_tbl <- get_content_parsedtbl(parsed_tbl)
-  full_content <- paste0(parsed_tbl$content, collapse = "\n")
+  parsed_tbl_content <- get_content_parsedtbl(parsed_tbl)
+  full_content <- paste0(parsed_tbl_content$content, collapse = "\n")
 
   if (!missing(output_file)) {
-    writeLines(enc2utf8(parsed_tbl$content), con = output_file)
+    writeLines(enc2utf8(full_content), con = output_file)
     return(invisible(full_content))
   } else {
     return(full_content)
