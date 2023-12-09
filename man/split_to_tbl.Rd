@@ -18,6 +18,8 @@ A tibble with 6 columns:
 \item \code{text}: text of the part (if any)
 \item \code{code}: code of the part (if any)
 \item \code{heading}: heading of the part (if any)
+\item \code{heading_level}: level of the heading (if any)
+\item \code{section}: section of the Rmd file, according to headings (if any)
 }
 }
 \description{

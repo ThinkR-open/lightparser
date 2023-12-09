@@ -24,14 +24,9 @@ library(lightparser)
 
 # Parse and split a Rmd / Qmd file, and transform as tibble
 
-This is the core of {fusen}. Where everything starts.  
-{fusen} reads your flat file to detect what is a yaml header, 
+{lightparser} reads your flat file to detect what is a yaml header, 
 what is a code chunk and its options, what is a text part.  
 Function `split_to_tbl()` returns a tibble with all these parts.
-
-You're not supposed to use this function directly when working with {fusen}.
-However, since {parsermd} is not maintained anymore, you may be interested in
-having access to these core functions.
 
 
 ```{r examples}

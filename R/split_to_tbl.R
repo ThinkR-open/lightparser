@@ -10,6 +10,8 @@
 #' - `text`: text of the part (if any)
 #' - `code`: code of the part (if any)
 #' - `heading`: heading of the part (if any)
+#' - `heading_level`: level of the heading (if any)
+#' - `section`: section of the Rmd file, according to headings (if any)
 #'
 #' @importFrom tibble tibble
 #' @importFrom utils getFromNamespace

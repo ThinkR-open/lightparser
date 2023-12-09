@@ -36,7 +36,7 @@ devtools::install_github("ThinkR-open/lightparser")
 
 ## Documentation
 
-Full documentation website on: https://ThinkR-open.github.io/lightparser
+Full documentation website on: https://thinkr-open.github.io/lightparser/
 
 ## Example
 
