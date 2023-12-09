@@ -8,3 +8,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^lightparser\.Rproj$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
