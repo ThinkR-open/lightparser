@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 URL: https://github.com/ThinkR-open/lightparser, https://thinkr-open.github.io/lightparser/
 BugReports: https://github.com/ThinkR-open/lightparser/issues
 Imports: 
-    knitr,
+    knitr (>= 1.35),
     rlang,
     tibble,
     utils,
