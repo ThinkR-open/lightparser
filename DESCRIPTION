@@ -1,15 +1,16 @@
 Package: lightparser
-Title: From Rmd And Qmd To Tibble And Back
-Version: 0.0.1
+Title: From Rmarkdown and Quarto to Tibble and Back
+Version: 0.1.0
 Authors@R: c(
     person("Sebastien", "Rochette", , "sebastien@thinkr.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-1565-9313")),
     person("ThinkR", role = "cph")
   )
-Description: Split your Rmd or Qmd file by sections into a tibble: titles,
-    text, chunks. Rebuild it from the tibble.
+Description: Split your Rmarkdown or Quarto file by sections into a
+    tibble: titles, text, chunks. Rebuild it from the tibble.
 License: MIT + file LICENSE
-URL: https://github.com/ThinkR-open/lightparser, https://thinkr-open.github.io/lightparser/
+URL: https://github.com/ThinkR-open/lightparser,
+    https://thinkr-open.github.io/lightparser/
 BugReports: https://github.com/ThinkR-open/lightparser/issues
 Imports: 
     knitr (>= 1.35),
@@ -27,4 +28,4 @@ Config/fusen/version: 0.6.0
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.0

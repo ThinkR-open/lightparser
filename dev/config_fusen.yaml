@@ -17,3 +17,9 @@ flat_split_combine.Rmd:
     check: false
     document: true
     overwrite: 'yes'
+keep:
+  path: keep
+  state: active
+  R: R/globals.R
+  tests: []
+  vignettes: []
