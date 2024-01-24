@@ -4,9 +4,9 @@
 \name{lightparser-package}
 \alias{lightparser}
 \alias{lightparser-package}
-\title{lightparser: From Rmarkdown and Quarto to Tibble and Back}
+\title{lightparser: From 'Rmarkdown' and 'Quarto' Files to Tibble and Back}
 \description{
-Split your Rmarkdown or Quarto file by sections into a tibble: titles, text, chunks. Rebuild it from the tibble.
+Split your 'rmarkdown' or 'quarto' files by sections into a tibble: titles, text, chunks. Rebuild the file from the tibble.
 }
 \seealso{
 Useful links:
