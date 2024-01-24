@@ -460,6 +460,47 @@ test_that(
     )
   }
 )
+
+test_that("split_to_tbl can be run from within a Rmd file", {
+  temprmd <- tempfile(fileext = ".Rmd")
+  tempoutput <- tempfile(fileext = ".html")
+
+  cat(
+    "---",
+    "title: split inside Rmd",
+    "output: html_document",
+    "---",
+    "",
+    "\x60``{r}",
+    "library(lightparser)",
+    "file <- system.file('dev-template-parsing.Rmd', package = 'lightparser')",
+    "tbl_rmd <- split_to_tbl(file)",
+    "\x60``",
+    sep = "\n",
+    file = temprmd
+  )
+
+  expect_error(
+    rmarkdown::render(temprmd, output_file = tempoutput, quiet = TRUE),
+    regexp = NA
+  )
+
+  output_lines <- readLines(tempoutput)
+  # there should be a message about knitting
+  expect_true(
+    any(grepl(
+      "It seems you are currently knitting a Rmd/Qmd file.",
+      output_lines
+    ))
+  )
+  # this message should be after the call to split_to_tbl
+  expect_true(
+    grepl(
+      "It seems you are currently knitting a Rmd/Qmd file.",
+      output_lines[grep("split_to_tbl", output_lines) + 1]
+    )
+  )
+})
 ```
 
 <!--
