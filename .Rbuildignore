@@ -13,3 +13,5 @@
 ^pkgdown$
 ^doc$
 ^Meta$
+^CONTRIBUTING\.md$
+^cran-comments\.md$
