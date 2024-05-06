@@ -18,6 +18,12 @@ Rmd or Qmd from the tibble.
 
 ## Installation
 
+You can install the released CRAN version:
+
+``` r
+install.packages("lightparser")
+```
+
 You can install the development version of lightparser from
 [GitHub](https://github.com/) with:
 
