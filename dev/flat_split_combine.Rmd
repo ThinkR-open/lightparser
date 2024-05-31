@@ -49,13 +49,13 @@ split_to_tbl <- function(file) {
   yaml_content <- yaml::yaml.load(rmd_lines[yaml_begin:yaml_end])
   yaml_tbl <- tibble(
     type = "yaml",
-    label = NA,
+    label = NA_character_,
     params = list(yaml_content),
     text = NA,
     code = NA,
-    heading = NA,
-    heading_level = NA,
-    section = NA
+    heading = NA_character_,
+    heading_level = NA_real_,
+    section = NA_character_
   )
 
   # Get the rest of the document without yaml
